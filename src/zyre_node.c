@@ -976,6 +976,7 @@ zyre_node_recv_peer (zyre_node_t *self)
     //  On other commands the peer must already exist
     zyre_peer_t *peer = (zyre_peer_t *) zhash_lookup (self->peers, zuuid_str (uuid));
     if (zre_msg_id (msg) == ZRE_MSG_HELLO) {
+        if (self->verbose) zsys_debug ("Received HELLO");
         if (peer) {
             //  Remove fake peers
             if (zyre_peer_ready (peer)) {
@@ -1028,9 +1029,13 @@ zyre_node_recv_peer (zyre_node_t *self)
     }
     //  Now process each command
     if (zre_msg_id (msg) == ZRE_MSG_HELLO) {
+        if (self->verbose) zsys_debug ("handling HELLO");
+
         //  Store properties from HELLO command into peer
         zyre_peer_set_name (peer, zre_msg_name (msg));
         zyre_peer_set_headers (peer, zre_msg_headers (msg));
+
+        if (self->verbose) zsys_debug ("Enqueuing ENTER");
 
         //  Tell the caller about the peer
         zstr_sendm (self->outbox, "ENTER");
