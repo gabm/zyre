@@ -965,6 +965,8 @@ zyre_node_recv_peer (zyre_node_t *self)
     //  Identity must be [1] followed by 16-byte UUID
     if (peerid_size != ZUUID_LEN + 1) {
         zre_msg_destroy (&msg);
+        if (self->verbose)
+            zsys_debug ("ignoring msg because peerid is wrong");
         return;
     }
     zuuid_t *uuid = zuuid_new ();
@@ -978,11 +980,15 @@ zyre_node_recv_peer (zyre_node_t *self)
             //  Remove fake peers
             if (zyre_peer_ready (peer)) {
                 zyre_node_remove_peer (self, peer);
+                if (self->verbose)
+                    zsys_debug ("ignoring HELLO because its a fake peer");
                 assert (!(zyre_peer_t *) zhash_lookup (self->peers, zuuid_str (uuid)));
             }
             else
             if (streq (zyre_peer_endpoint (peer), self->endpoint)) {
                 //  We ignore HELLO, if peer has same endpoint as current node
+                if (self->verbose)
+                    zsys_debug ("ignoring HELLO because peer has the same endpoint as current node");
                 zre_msg_destroy (&msg);
                 zuuid_destroy (&uuid);
                 return;
@@ -1007,6 +1013,8 @@ zyre_node_recv_peer (zyre_node_t *self)
     }
     //  Ignore command if peer isn't ready
     if (peer == NULL || !zyre_peer_ready (peer)) {
+        if (self->verbose)
+            zsys_debug ("ignoring command because peer is not ready yet");
         zre_msg_destroy (&msg);
         zuuid_destroy (&uuid);
         return;
