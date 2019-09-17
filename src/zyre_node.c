@@ -1039,12 +1039,16 @@ zyre_node_recv_peer (zyre_node_t *self)
 
         //  Tell the caller about the peer
         zstr_sendm (self->outbox, "ENTER");
+        if (self->verbose) zsys_debug ("Enqueuing identity");
         zstr_sendm (self->outbox, zyre_peer_identity (peer));
+        if (self->verbose) zsys_debug ("Enqueuing peer name");
         zstr_sendm (self->outbox, zyre_peer_name (peer));
         if (zyre_peer_headers (peer)) {
             zframe_t *headers = zhash_pack (zyre_peer_headers (peer));
+            if (self->verbose) zsys_debug ("Enqueuing headers");
             zframe_send (&headers, self->outbox, ZFRAME_MORE);
         }
+        if (self->verbose) zsys_debug ("Enqueuing endpoint");
         zstr_send (self->outbox, zre_msg_endpoint (msg));
 
         if (self->verbose)
