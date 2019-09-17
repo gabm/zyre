@@ -120,27 +120,28 @@ set(OPTIONAL_LIBRARIES_STATIC)
 ########################################################################
 # LIBZMQ dependency
 ########################################################################
-find_package(libzmq REQUIRED)
-IF (LIBZMQ_FOUND)
-    include_directories(${LIBZMQ_INCLUDE_DIRS})
-    list(APPEND MORE_LIBRARIES ${LIBZMQ_LIBRARIES})
+find_package(ZeroMQ REQUIRED)
+IF (ZeroMQ_FOUND)
+    include_directories(${ZeroMQ_INCLUDE_DIRS})
+    list(APPEND MORE_LIBRARIES libzmq)
   IF (PC_LIBZMQ_FOUND)
       set(pkg_config_names_private "${pkg_config_names_private} libzmq")
       list(APPEND OPTIONAL_LIBRARIES_STATIC ${PC_LIBZMQ_STATIC_LDFLAGS})
   ELSE (PC_LIBZMQ_FOUND)
       set(pkg_config_libs_private "${pkg_config_libs_private} -lzmq")
   ENDIF (PC_LIBZMQ_FOUND)
-ELSE (LIBZMQ_FOUND)
+ELSE (ZeroMQ_FOUND)
     message( FATAL_ERROR "libzmq not found." )
-ENDIF (LIBZMQ_FOUND)
+ENDIF (ZeroMQ_FOUND)
 
 ########################################################################
 # CZMQ dependency
 ########################################################################
-find_package(czmq REQUIRED)
-IF (CZMQ_FOUND)
+find_package(czmq CONFIG REQUIRED)
+IF (TARGET czmq)
+    get_target_property(CZMQ_INCLUDE_DIRS czmq INTERFACE_INCLUDE_DIRECTORIES)
     include_directories(${CZMQ_INCLUDE_DIRS})
-    list(APPEND MORE_LIBRARIES ${CZMQ_LIBRARIES})
+    list(APPEND MORE_LIBRARIES czmq)
   IF (PC_CZMQ_FOUND)
       set(pkg_config_names_private "${pkg_config_names_private} libczmq")
       list(APPEND OPTIONAL_LIBRARIES_STATIC ${PC_CZMQ_STATIC_LDFLAGS})
@@ -354,8 +355,8 @@ if (TARGET zyre)
 target_link_libraries(
     perf_local
     zyre
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
 )
 endif()
@@ -363,8 +364,8 @@ if (NOT TARGET zyre AND TARGET zyre-static)
 target_link_libraries(
     perf_local
     zyre-static
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
     ${OPTIONAL_LIBRARIES_STATIC}
 )
@@ -377,8 +378,8 @@ if (TARGET zyre)
 target_link_libraries(
     perf_remote
     zyre
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
 )
 endif()
@@ -386,8 +387,8 @@ if (NOT TARGET zyre AND TARGET zyre-static)
 target_link_libraries(
     perf_remote
     zyre-static
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
     ${OPTIONAL_LIBRARIES_STATIC}
 )
@@ -400,8 +401,8 @@ if (TARGET zyre)
 target_link_libraries(
     zpinger
     zyre
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
 )
 endif()
@@ -409,8 +410,8 @@ if (NOT TARGET zyre AND TARGET zyre-static)
 target_link_libraries(
     zpinger
     zyre-static
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
     ${OPTIONAL_LIBRARIES_STATIC}
 )
@@ -426,8 +427,8 @@ if (TARGET zyre)
 target_link_libraries(
     ztester_beacon
     zyre
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
 )
 endif()
@@ -435,8 +436,8 @@ if (NOT TARGET zyre AND TARGET zyre-static)
 target_link_libraries(
     ztester_beacon
     zyre-static
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
     ${OPTIONAL_LIBRARIES_STATIC}
 )
@@ -449,8 +450,8 @@ if (TARGET zyre)
 target_link_libraries(
     ztester_gossip
     zyre
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
 )
 endif()
@@ -458,8 +459,8 @@ if (NOT TARGET zyre AND TARGET zyre-static)
 target_link_libraries(
     ztester_gossip
     zyre-static
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
     ${OPTIONAL_LIBRARIES_STATIC}
 )
@@ -472,8 +473,8 @@ if (TARGET zyre)
 target_link_libraries(
     zyre_selftest
     zyre
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
 )
 endif()
@@ -481,8 +482,8 @@ if (NOT TARGET zyre AND TARGET zyre-static)
 target_link_libraries(
     zyre_selftest
     zyre-static
-    ${LIBZMQ_LIBRARIES}
-    ${CZMQ_LIBRARIES}
+    libzmq
+    czmq
     ${OPTIONAL_LIBRARIES}
     ${OPTIONAL_LIBRARIES_STATIC}
 )
